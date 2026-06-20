@@ -1,0 +1,245 @@
+/* ═══════════════════════════
+   EnergyAI Dashboard Styles
+   ═══════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:      #07090f;
+  --bg2:     #0d1117;
+  --border:  rgba(255,255,255,0.08);
+  --green:   #00e5a0;
+  --blue:    #3b82f6;
+  --amber:   #f59e0b;
+  --purple:  #8b5cf6;
+  --red:     #ef4444;
+  --text:    #e2e8f0;
+  --muted:   #64748b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px;
+  background: rgba(13,17,23,0.95);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 20px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.logo-icon { font-size: 28px; }
+.logo-name { font-size: 16px; font-weight: 700; }
+.logo-sub  { font-size: 10px; color: var(--muted); }
+
+nav {
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  text-align: left;
+  transition: all 0.2s;
+  width: 100%;
+}
+.nav-btn:hover  { background: rgba(255,255,255,0.05); color: var(--text); }
+.nav-btn.active { background: rgba(0,229,160,0.1); color: var(--green); }
+
+.badge {
+  margin-left: auto;
+  background: var(--red);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 20px;
+}
+
+.sys-status {
+  margin: 0 10px;
+  padding: 12px;
+  background: rgba(0,229,160,0.04);
+  border: 1px solid rgba(0,229,160,0.12);
+  border-radius: 10px;
+  font-size: 11px;
+}
+.sys-title { color: var(--green); font-weight: 600; margin-bottom: 8px; }
+.sys-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: var(--muted); }
+.ok   { color: var(--green); }
+.warn { color: var(--amber); }
+
+/* ── MAIN ── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  height: 56px;
+  background: rgba(7,9,15,0.9);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.topbar-title { font-size: 15px; font-weight: 700; }
+.topbar-sub   { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+
+.live-badge {
+  background: rgba(0,229,160,0.1);
+  border: 1px solid rgba(0,229,160,0.25);
+  color: var(--green);
+  font-size: 11px; font-weight: 700;
+  padding: 4px 10px; border-radius: 20px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+.clock {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ── TABS ── */
+.tab { display: none; padding: 20px 24px; overflow-y: auto; }
+.tab.active { display: block; animation: fadeUp 0.3s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── STAT CARDS ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-top-width: 2px;
+}
+.stat-card.green  { border-top-color: var(--green); }
+.stat-card.blue   { border-top-color: var(--blue); }
+.stat-card.amber  { border-top-color: var(--amber); }
+.stat-card.purple { border-top-color: var(--purple); }
+
+.stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 500; margin-bottom: 5px; }
+.stat-value span { font-size: 13px; color: var(--muted); }
+.stat-sub   { font-size: 11px; color: var(--muted); }
+
+.stat-card.green  .stat-value { color: var(--green); }
+.stat-card.blue   .stat-value { color: #60a5fa; }
+.stat-card.amber  .stat-value { color: var(--amber); }
+.stat-card.purple .stat-value { color: #a78bfa; }
+
+/* ── ALERT BOX ── */
+.alert-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.alert-title { color: #f87171; font-weight: 700; font-size: 13px; }
+.alert-msg   { color: var(--muted); font-size: 12px; }
+
+/* ── CARDS ── */
+.card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+.card-header  { margin-bottom: 16px; }
+.card-title   { font-size: 14px; font-weight: 700; }
+.card-sub     { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.charts-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+/* ── SUGGESTIONS ── */
+.suggest-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.suggest-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+  font-size: 13px;
+  color: #cbd5e1;
+  border-left: 3px solid transparent;
+}
+.suggest-item.high   { border-left-color: var(--red); }
+.suggest-item.medium { border-left-color: var(--amber); }
+.suggest-item.low    { border-left-color: var(--green); }
+.suggest-icon { font-size: 20px; flex-shrink: 0; }
+
+/* ── TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  margin-top: 12px;
+}
+.data-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+.data-table tr:hover td { background: rgba(255,255,255,0.02); }
