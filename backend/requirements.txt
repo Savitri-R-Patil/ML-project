@@ -1,4 +1,5 @@
-fastapi
+fastapi[all]
+aiofiles
 uvicorn
 pymongo
 pydantic

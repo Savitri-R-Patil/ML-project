@@ -193,15 +193,20 @@ def check_anomaly(new_reading: dict):
             )
             print(f"🚨 Anomaly: {severity} — {new_reading['power']}W")
 
-# Serve frontend directly on root
+# Serve frontend directly on root using absolute paths to prevent directory errors on cloud hosting
+import os
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
+# Get the absolute path to the frontend folder
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+
 @app.get("/")
 async def serve_index():
-    return FileResponse("../frontend/index.html")
+    return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
-app.mount("/", StaticFiles(directory="../frontend"), name="frontend")
+app.mount("/", StaticFiles(directory=FRONTEND_DIR), name="frontend")
 
 if __name__ == "__main__":
     # pyrefly: ignore [missing-import]
