@@ -32,11 +32,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount(
-    "/dashboard",
-    StaticFiles(directory="../frontend", html=True),
-    name="frontend"
-)
+
 
 # Tracks last time simulator sent data
 last_simulator_ping = {"time": None}
@@ -196,6 +192,16 @@ def check_anomaly(new_reading: dict):
                 severity = severity
             )
             print(f"🚨 Anomaly: {severity} — {new_reading['power']}W")
+
+# Serve frontend directly on root
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+@app.get("/")
+async def serve_index():
+    return FileResponse("../frontend/index.html")
+
+app.mount("/", StaticFiles(directory="../frontend"), name="frontend")
 
 if __name__ == "__main__":
     # pyrefly: ignore [missing-import]
