@@ -3,10 +3,10 @@ const API = "";
 
 // ── Tab titles ──
 const tabTitles = {
-  dashboard:  "Overview Dashboard",
+  dashboard: "Overview Dashboard",
   prediction: "LSTM Prediction",
-  history:    "Energy History",
-  alerts:     "Active Alerts"
+  history: "Energy History",
+  alerts: "Active Alerts"
 };
 
 function showTab(name, btn) {
@@ -16,9 +16,9 @@ function showTab(name, btn) {
   btn.classList.add("active");
   document.getElementById("tab-title").textContent = tabTitles[name];
 
-  if (name === "history")    loadHistory();
+  if (name === "history") loadHistory();
   if (name === "prediction") loadPrediction();
-  if (name === "alerts")     loadAlerts();
+  if (name === "alerts") loadAlerts();
 }
 
 // ── Clock ──
@@ -29,10 +29,10 @@ setInterval(() => {
 
 // ── Live chart setup ──
 const liveLabels = [];
-const liveData   = [];
+const liveData = [];
 const MAX_POINTS = 20;
 
-const liveCtx   = document.getElementById("liveChart").getContext("2d");
+const liveCtx = document.getElementById("liveChart").getContext("2d");
 const liveChart = new Chart(liveCtx, {
   type: "line",
   data: {
@@ -70,7 +70,7 @@ const liveChart = new Chart(liveCtx, {
 });
 
 // ── Prediction chart (dashboard tab) ──
-const predCtx   = document.getElementById("predChart").getContext("2d");
+const predCtx = document.getElementById("predChart").getContext("2d");
 const predChart = new Chart(predCtx, {
   type: "line",
   data: {
@@ -108,7 +108,7 @@ const predChart = new Chart(predCtx, {
 });
 
 // ── Forecast chart (Prediction tab) ──
-const forecastCtx   = document.getElementById("forecastChart").getContext("2d");
+const forecastCtx = document.getElementById("forecastChart").getContext("2d");
 const forecastChart = new Chart(forecastCtx, {
   type: "line",
   data: {
@@ -150,7 +150,7 @@ const forecastChart = new Chart(forecastCtx, {
 // ══════════════════════════════════════
 async function fetchStatus() {
   try {
-    const res  = await fetch(`${API}/api/status`);
+    const res = await fetch(`${API}/api/status`);
     const data = await res.json();
 
     if (data.error) {
@@ -185,7 +185,7 @@ async function fetchStatus() {
     liveChart.update();
 
     // Update system status sidebar
-    updateSystemStatus("server",    true);
+    updateSystemStatus("server", true);
     updateSystemStatus("simulator", data.simulator_active);
 
     // Generate AI suggestions
@@ -193,7 +193,7 @@ async function fetchStatus() {
 
   } catch (err) {
     // Server not reachable
-    updateSystemStatus("server",    false);
+    updateSystemStatus("server", false);
     updateSystemStatus("simulator", false);
   }
 }
@@ -203,17 +203,17 @@ function updateSystemStatus(component, isOnline) {
   let elId = `${component}-status`;
   if (component === "server") elId = "srv-status";
   if (component === "simulator") elId = "esp-status";
-  
+
   const el = document.getElementById(elId);
   if (!el) return;
 
   if (component === "server") {
     el.textContent = isOnline ? "● Online" : "● Offline";
-    el.className   = isOnline ? "ok" : "warn";
+    el.className = isOnline ? "ok" : "warn";
   }
   if (component === "simulator") {
     el.textContent = isOnline ? "● Sending data" : "● Not running";
-    el.className   = isOnline ? "ok" : "warn";
+    el.className = isOnline ? "ok" : "warn";
   }
 }
 
@@ -285,7 +285,7 @@ function generateSuggestions(powerKw, temp) {
 // ══════════════════════════════════════
 async function fetchAlerts() {
   try {
-    const res  = await fetch(`${API}/api/alerts`);
+    const res = await fetch(`${API}/api/alerts`);
     const data = await res.json();
 
     const count = data.count || 0;
@@ -309,8 +309,8 @@ async function fetchAlerts() {
 // ══════════════════════════════════════
 async function loadHistory() {
   try {
-    const res   = await fetch(`${API}/api/readings?limit=20`);
-    const data  = await res.json();
+    const res = await fetch(`${API}/api/readings?limit=20`);
+    const data = await res.json();
     const tbody = document.getElementById("history-tbody");
 
     if (!data.readings || data.readings.length === 0) {
@@ -327,9 +327,9 @@ async function loadHistory() {
       const time = new Date(r.timestamp + "Z").toLocaleTimeString();
       return `<tr>
         <td>${time}</td>
-        <td>${r.voltage  ?? "--"}</td>
-        <td>${r.current  ?? "--"}</td>
-        <td>${r.power    ?? "--"}</td>
+        <td>${r.voltage ?? "--"}</td>
+        <td>${r.current ?? "--"}</td>
+        <td>${r.power ?? "--"}</td>
         <td>${r.temperature ?? "--"}</td>
       </tr>`;
     }).join("");
@@ -345,7 +345,7 @@ async function loadHistory() {
 // ══════════════════════════════════════
 async function loadPrediction() {
   try {
-    const res  = await fetch(`${API}/api/prediction`);
+    const res = await fetch(`${API}/api/prediction`);
     const data = await res.json();
 
     if (data.message || !data.predictions) {
@@ -361,22 +361,22 @@ async function loadPrediction() {
     const valuesW = data.predictions.map(p => p.power_w);
     const valuesKW = data.predictions.map(p => p.power_kw);
 
-    predChart.data.labels                = labels;
-    predChart.data.datasets[0].data      = valuesW;
+    predChart.data.labels = labels;
+    predChart.data.datasets[0].data = valuesW;
     predChart.update();
 
     // Update large forecast chart
-    forecastChart.data.labels           = labels;
+    forecastChart.data.labels = labels;
     forecastChart.data.datasets[0].data = valuesKW;
     forecastChart.update();
 
     // Fill prediction table
     const tbody = document.getElementById("pred-tbody");
-    
+
     // Dynamic logic based on Average + Variance (Standard Deviation)
     const sumKw = data.predictions.reduce((acc, p) => acc + p.power_kw, 0);
     const avgKw = sumKw / data.predictions.length;
-    
+
     const variance = data.predictions.reduce((acc, p) => acc + Math.pow(p.power_kw - avgKw, 2), 0) / data.predictions.length;
     let stdDev = Math.sqrt(variance);
     if (stdDev < 0.02) stdDev = 0.02; // Minimum variation
@@ -388,15 +388,15 @@ async function loadPrediction() {
       let status = "Normal";
       let bg = "rgba(0, 229, 160, 0.15)";
       let color = "#00e5a0";
-      
+
       if (stdDev <= 0.02 && Math.abs(p.power_kw - avgKw) < 0.05) {
         // Almost flat line, no real peaks
         status = "Normal";
-      } else if (p.power_kw >= thresholdPeak) { 
+      } else if (p.power_kw >= thresholdPeak) {
         status = "Peak"; color = "#ef4444"; bg = "rgba(239, 68, 68, 0.15)";
-      } else if (p.power_kw >= thresholdHigh) { 
+      } else if (p.power_kw >= thresholdHigh) {
         status = "High"; color = "#f97316"; bg = "rgba(249, 115, 22, 0.15)";
-      } else if (i > 0 && p.power_kw > arr[i-1].power_kw) { 
+      } else if (i > 0 && p.power_kw > arr[i - 1].power_kw) {
         status = "Rising"; color = "#eab308"; bg = "rgba(234, 179, 8, 0.15)";
       }
 
@@ -404,7 +404,7 @@ async function loadPrediction() {
 
       return `
       <tr>
-        <td>${new Date(p.time + "Z").toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
+        <td>${new Date(p.time + "Z").toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
         <td>${p.power_kw.toFixed(3)} kW</td>
         <td>₹${estCost}</td>
         <td><span style="background: ${bg}; color: ${color}; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">${status}</span></td>
@@ -414,8 +414,29 @@ async function loadPrediction() {
     // Calculate overall cost and AI insights
     let totalKwh = data.predictions.reduce((sum, p) => sum + p.power_kw, 0);
     let totalCost = totalKwh * 8.5; // Rs. 8.5 per kWh
-    let potentialSavings = totalCost * 0.15; // 15% savings estimate
-    
+
+    // Calculate meaningful savings based on peak/high threshold load shifting
+    let potentialSavings = 0;
+    let savingsReason = "";
+
+    data.predictions.forEach(p => {
+      if (p.power_kw >= thresholdPeak) {
+        // Assume 25% savings by shifting peak load to off-peak hours
+        potentialSavings += (p.power_kw * 8.5) * 0.25;
+      } else if (p.power_kw >= thresholdHigh) {
+        // Assume 15% savings by optimizing high load
+        potentialSavings += (p.power_kw * 8.5) * 0.15;
+      }
+    });
+
+    if (potentialSavings > 0) {
+      savingsReason = "Based on reducing Peak usage by 25% & High usage by 15% through load shifting.";
+    } else {
+      // If no peaks, offer a baseline 5% standby optimization
+      potentialSavings = totalCost * 0.05;
+      savingsReason = "Based on a baseline 5% optimization of standby devices (no peak usage detected).";
+    }
+
     let insightsHtml = `
       <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
       <div style="display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;">
@@ -431,6 +452,7 @@ async function loadPrediction() {
           <div>
             <div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Potential Savings</div>
             <div style="font-size: 28px; font-weight: bold; color: #10b981; margin-top: 4px;">~₹${potentialSavings.toFixed(2)}</div>
+            <div style="font-size: 10px; color: #94a3b8; margin-top: 6px; line-height: 1.3; max-width: 250px;">${savingsReason}</div>
           </div>
         </div>
       </div>
@@ -442,7 +464,7 @@ async function loadPrediction() {
         </div>
       </div>
     `;
-    
+
     document.getElementById("pred-insights").innerHTML = insightsHtml;
 
     // Call backend API for Gemini insights
@@ -457,8 +479,8 @@ async function loadPrediction() {
         document.getElementById("ai-insights-container").innerHTML = aiData.html;
       }
     } catch (e) {
-       console.log("Failed to load AI insights", e);
-       document.getElementById("ai-insights-container").innerHTML = `
+      console.log("Failed to load AI insights", e);
+      document.getElementById("ai-insights-container").innerHTML = `
         <div class="suggest-item" style="border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05);">
           <span class="suggest-icon">⚠️</span>
           <div><strong>Connection Error:</strong> Could not connect to the backend AI service.</div>
@@ -476,9 +498,9 @@ async function loadPrediction() {
 // ══════════════════════════════════════
 async function loadAlerts() {
   try {
-    const res  = await fetch(`${API}/api/alerts`);
+    const res = await fetch(`${API}/api/alerts`);
     const data = await res.json();
-    const div  = document.getElementById("alerts-list");
+    const div = document.getElementById("alerts-list");
 
     if (!data.alerts || data.count === 0) {
       div.innerHTML = `
@@ -511,6 +533,6 @@ async function loadAlerts() {
 // START
 // ══════════════════════════════════════
 fetchStatus();
-setInterval(fetchStatus,  5000);   // live data every 5 seconds
+setInterval(fetchStatus, 5000);   // live data every 5 seconds
 fetchAlerts();
 setInterval(fetchAlerts, 10000);   // alerts every 10 seconds

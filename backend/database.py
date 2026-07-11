@@ -1,11 +1,15 @@
 # database.py
 # pyrefly: ignore [missing-import]
+import os
+# pyrefly: ignore [missing-import]
 from pymongo import MongoClient
 from datetime import datetime
 
 # Connect to MongoDB (must be running on your PC)
 # Install MongoDB from: https://www.mongodb.com/try/download/community
-client = MongoClient("mongodb://localhost:27017/")
+# Uses MONGO_URL environment variable for cloud hosting, falls back to localhost.
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017/")
+client = MongoClient(MONGO_URL)
 
 # This creates the database and collections automatically
 db = client["energy_ai_db"]

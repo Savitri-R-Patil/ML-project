@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pymongo
+pydantic
+python-dotenv
+google-generativeai
+pandas
+numpy
+scikit-learn
+tensorflow
+matplotlib
