@@ -9,7 +9,9 @@ import math
 import random
 from datetime import datetime, timedelta
 
-SERVER_URL = "http://localhost:8000/api/sensor"
+import os
+port = os.getenv("PORT", "8000")
+SERVER_URL = os.getenv("SERVER_URL", f"http://localhost:{port}/api/sensor")
 
 print("═══════════════════════════════════")
 print("  EnergyAI — Data Simulator")
