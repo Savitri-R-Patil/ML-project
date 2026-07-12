@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from database import (save_reading, get_latest_readings,
                       save_alert, get_active_alerts)
+from simulator import generate_one_reading
 from datetime import datetime
 import statistics
 import os
@@ -204,6 +205,16 @@ FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
 @app.get("/")
 async def serve_index():
+    # Generate one simulated reading whenever someone visits the site
+    try:
+        data = generate_one_reading()
+        last_simulator_ping["time"] = datetime.utcnow()
+        check_anomaly(data)
+        save_reading(data)
+        print(f"✓ Visit-triggered reading: {data['power']}W")
+    except Exception as e:
+        print(f"✗ Failed to generate reading on visit: {e}")
+
     return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
 app.mount("/", StaticFiles(directory=FRONTEND_DIR), name="frontend")
